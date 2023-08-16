@@ -19,10 +19,7 @@ namespace terxel
     class Terxel
     {
         public:
-            Terxel()
-            {
-
-            }
+            Terxel() = default;
 
             Terxel(Color first, Color second)
             {
@@ -63,27 +60,41 @@ namespace terxel
     class Terxture
     {
         public:
-            Terxture(int width, int height)
+            Terxture(int width, int height, int pixelScale = 1)
                 :
-                    width(width),
-                    height((int)((float)height / 2.0f + 0.5f)),
-                    terxels(this->width * this->height)
+                    width(width * pixelScale),
+                    height((int)((float)height * pixelScale / 2.0f + 0.5f)),
+                    terxels(this->width * this->height),
+                    pixelScale(pixelScale)
         {
         }
 
             void SetPixel(int x, int y, Color color)
             {
-                if (y % 2 == 0)
+                x *= pixelScale;
+                y *= pixelScale;
+
+                for (int yOffset = 0; yOffset < pixelScale; yOffset++)
                 {
-                    terxels[y / 2 * width + x].top = color;
-                    terxels[y / 2 * width + x].top.enabled = true;
+                    for (int xOffset = 0; xOffset < pixelScale; xOffset++)
+                    {
+                        int pixelX = x + xOffset;
+                        int pixelY = y + yOffset;
+
+                        if (pixelY % 2 == 0)
+                        {
+                            terxels[pixelY / 2 * width + pixelX].top = color;
+                            terxels[pixelY / 2 * width + pixelX].top.enabled = true;
+                        }
+
+                        else
+                        {
+                            terxels[pixelY / 2 * width + pixelX].bottom = color;
+                            terxels[pixelY / 2 * width + pixelX].bottom.enabled = true;
+                        }
+                    }
                 }
 
-                else
-                {
-                    terxels[y / 2 * width + x].bottom = color;
-                    terxels[y / 2 * width + x].bottom.enabled = true;
-                }
             }
 
             void Draw()
@@ -106,5 +117,7 @@ namespace terxel
             const int width;
             const int height;
             std::vector<Terxel> terxels;
+
+            const int pixelScale;
     };
 }
