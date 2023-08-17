@@ -29,8 +29,6 @@ namespace terxel
 
             void Draw()
             {
-                unsigned char c;
-
                 if (!bottom.enabled && !top.enabled)
                 {
                     printf(" ");
